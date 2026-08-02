@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}VibeBanter | Automated Instagram Video Blog Platform{% endblock %}</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{% static 'css/editorial.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header-bar">
+    <div class="header-container">
+      <a href="{% url 'home' %}" class="brand-logo">
+        VibeBanter <span class="brand-tag">Django Aggregator</span>
+      </a>
+
+      <!-- On-The-Fly Instagram Handle Scanner Bar -->
+      <form action="{% url 'scan_post' %}" method="POST" class="scan-form">
+        {% csrf_token %}
+        <span class="scan-input-prefix">@</span>
+        <input 
+          type="text" 
+          name="handle" 
+          class="scan-input" 
+          placeholder="enter any instagram handle..." 
+          required 
+          autocomplete="off"
+        >
+        <button type="submit" class="scan-btn">Scan & Generate Blog</button>
+      </form>
+
+      <nav class="nav-links">
+        <a href="{% url 'home' %}" class="nav-link">Home Feed</a>
+        <a href="{% url 'admin_dashboard' %}" class="nav-link">Scanner Logs</a>
+        <a href="/admin/" class="nav-link" target="_blank">Django Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Flash Messages -->
+  {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <strong>VibeBanter Platform</strong> &mdash; Built with Python & Django. Hosted video blog aggregator.
+      </div>
+      <div>
+        On-the-fly handle scanning engine active.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

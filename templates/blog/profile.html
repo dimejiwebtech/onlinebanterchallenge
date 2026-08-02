@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}@{{ profile.handle }} Video Articles | VibeBanter{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+  <!-- Profile Banner -->
+  <div style="background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 6px; padding: 2rem; margin-bottom: 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+      <img src="{{ profile.profile_pic_url }}" alt="{{ profile.handle }}" style="width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--border-color);">
+      <div>
+        <h1 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 0.25rem;">
+          @{{ profile.handle }}
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;">
+          {{ profile.bio }}
+        </p>
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+          Synced {{ post_count }} video posts &bull; Last Scanned: {{ profile.last_scanned_at|date:"Y-m-d H:i:s" }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Re-scan Button -->
+    <a href="{% url 'scan_handle' profile.handle %}" class="scan-btn" style="border-radius: 4px; padding: 0.75rem 1.5rem;">
+      ⚡ Force Rescan Feed
+    </a>
+  </div>
+
+  <div class="section-title">
+    <span>Video Blog Posts by @{{ profile.handle }}</span>
+  </div>
+
+  <div class="articles-grid">
+    {% for post in posts %}
+      <article class="article-card">
+        <div class="card-media">
+          <video controls poster="{{ post.thumbnail_url }}" preload="metadata" style="width:100%; height:100%; object-fit:cover;">
+            <source src="{{ post.video_url }}" type="video/mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <div class="meta-badge">@{{ post.profile.handle }}</div>
+          <h3 class="card-title">
+            <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
+          </h3>
+          <p class="card-caption">
+            {{ post.caption }}
+          </p>
+          <div class="card-footer">
+            <span>{{ post.views_count }} VIEWS</span>
+            <span>{{ post.published_at|date:"M j, Y" }}</span>
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      <p style="color: var(--text-muted);">No video posts found for @{{ profile.handle }}.</p>
+    {% endfor %}
+  </div>
+
+</div>
+
+{% endblock %}

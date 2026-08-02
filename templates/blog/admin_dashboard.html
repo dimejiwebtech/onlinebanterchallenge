@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Scanner Logs & Handle Management | VibeBanter{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+  <div style="margin-bottom: 2rem;">
+    <h1 style="font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 0.5rem;">
+      Admin & Scanner Control Center
+    </h1>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">
+      Monitor Instagram handle scanning logs, sync statuses, and manage active profiles.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem;">
+    
+    <!-- Active Handles -->
+    <div style="background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; padding: 1.5rem;">
+      <h2 style="font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+        Active Scanned Profiles ({{ profiles.count }})
+      </h2>
+      
+      <div style="max-height: 400px; overflow-y: auto;">
+        {% for profile in profiles %}
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">
+            <div>
+              <div style="font-weight: 600;"><a href="{% url 'profile_detail' profile.handle %}">@{{ profile.handle }}</a></div>
+              <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+                Posts: {{ profile.posts.count }} &bull; Last scanned: {{ profile.last_scanned_at|date:"M j, H:i" }}
+              </div>
+            </div>
+            <a href="{% url 'scan_handle' profile.handle %}" style="font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-primary); border: 1px solid var(--border-color); padding: 0.3rem 0.6rem; border-radius: 3px;">
+              Rescan
+            </a>
+          </div>
+        {% empty %}
+          <p style="color: var(--text-muted);">No handles registered yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Scanner Activity Log -->
+    <div style="background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; padding: 1.5rem;">
+      <h2 style="font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+        Recent Scanner Activity Logs
+      </h2>
+
+      <div style="max-height: 400px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.82rem;">
+        {% for log in logs %}
+          <div style="padding: 0.6rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
+            <div>
+              <span style="color: {% if log.status == 'SUCCESS' %}#52e086{% else %}#ff6b6b{% endif %}; font-weight: 600;">
+                [{{ log.status }}]
+              </span>
+              @{{ log.handle }} &bull; {{ log.posts_found }} posts synced
+            </div>
+            <div style="color: var(--text-muted);">
+              {{ log.timestamp|date:"H:i:s" }}
+            </div>
+          </div>
+        {% empty %}
+          <p style="color: var(--text-muted);">No scan logs recorded.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

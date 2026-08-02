@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} | VibeBanter Editorial Video{% endblock %}
+
+{% block content %}
+
+<div class="container" style="max-width: 900px;">
+
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'home' %}" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">&larr; Back to Editorial Feed</a>
+  </div>
+
+  <article>
+    <div class="meta-badge" style="font-size: 0.85rem;">
+      AUTOMATED INSTAGRAM SCAN &bull; @{{ post.profile.handle }}
+    </div>
+
+    <h1 style="font-family: var(--font-serif); font-size: 2.8rem; line-height: 1.2; margin-bottom: 1.5rem; font-weight: 700;">
+      {{ post.title }}
+    </h1>
+
+    <div class="author-meta" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+      <img src="{{ post.profile.profile_pic_url }}" alt="{{ post.profile.handle }}" class="author-avatar" style="width: 48px; height: 48px;">
+      <div class="author-info">
+        <div class="author-name" style="font-size: 1rem;"><a href="{% url 'profile_detail' post.profile.handle %}">@{{ post.profile.handle }}</a></div>
+        <div class="author-handle" style="font-size: 0.85rem;">
+          Published {{ post.published_at|date:"F j, Y" }} &bull; {{ post.views_count }} Views &bull; {{ post.likes_count }} Likes
+        </div>
+      </div>
+    </div>
+
+    <!-- Self-Hosted Playable Video Player -->
+    <div class="video-container" style="margin-bottom: 2.5rem; border-radius: 6px;">
+      <video controls poster="{{ post.thumbnail_url }}" class="editorial-video" style="max-height: 600px;" autoplay muted>
+        <source src="{{ post.video_url }}" type="video/mp4">
+        Your browser does not support HTML5 video streaming.
+      </video>
+    </div>
+
+    <!-- Blog Article Body -->
+    <div style="font-size: 1.15rem; line-height: 1.8; color: #e2e4e8; margin-bottom: 3rem;">
+      {{ post.article_body|linebreaks }}
+    </div>
+
+    <!-- Original Source Link & Metadata -->
+    <div style="background-color: var(--bg-surface); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.88rem; margin-bottom: 3rem;">
+      <div style="color: var(--accent-amber); font-weight: 600; margin-bottom: 0.5rem;">INSTAGRAM SOURCE METADATA</div>
+      <div style="margin-bottom: 0.25rem;">Original Post URL: <a href="{{ post.ig_url }}" target="_blank" style="color: var(--accent-blue); text-decoration: underline;">{{ post.ig_url }}</a></div>
+      <div>Post ID: <code>{{ post.ig_post_id }}</code></div>
+    </div>
+
+  </article>
+
+  {% if related_posts %}
+    <div class="section-title">
+      <span>More Video Articles</span>
+    </div>
+
+    <div class="articles-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+      {% for rel in related_posts %}
+        <article class="article-card">
+          <div class="card-media" style="aspect-ratio: 16/10;">
+            <img src="{{ rel.thumbnail_url }}" alt="{{ rel.title }}" style="width:100%; height:100%; object-fit:cover;">
+          </div>
+          <div class="card-body" style="padding: 1rem;">
+            <h4 class="card-title" style="font-size: 1rem;">
+              <a href="{% url 'post_detail' rel.slug %}">{{ rel.title }}</a>
+            </h4>
+            <div class="card-footer" style="padding-top: 0.5rem; font-size: 0.75rem;">
+              <span>@{{ rel.profile.handle }}</span>
+              <span>{{ rel.views_count }} views</span>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

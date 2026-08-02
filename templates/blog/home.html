@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}VibeBanter | Editorial Video Blog Feed{% endblock %}
+
+{% block content %}
+
+<!-- Active Handles Ticker -->
+<div class="ticker-bar">
+  <div class="ticker-content">
+    <span class="ticker-label">ACTIVE HANDLES:</span>
+    {% for prof in recent_profiles %}
+      <a href="{% url 'profile_detail' prof.handle %}" class="profile-pill">
+        @{{ prof.handle }}
+      </a>
+    {% empty %}
+      <span style="color: var(--text-muted);">No handles scanned yet. Enter any handle above to scan instantly!</span>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="container">
+
+  {% if featured_post %}
+    <!-- Featured Hero Section -->
+    <div class="hero-editorial">
+      <div class="video-container">
+        <video controls poster="{{ featured_post.thumbnail_url }}" class="editorial-video" preload="metadata">
+          <source src="{{ featured_post.video_url }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div style="display: flex; flex-direction: column; justify-content: center;">
+        <div class="meta-badge">Featured Editorial Video &bull; @{{ featured_post.profile.handle }}</div>
+        <h1 class="editorial-title">
+          <a href="{% url 'post_detail' featured_post.slug %}">{{ featured_post.title }}</a>
+        </h1>
+        <p class="editorial-excerpt">
+          {{ featured_post.caption|truncatewords:35 }}
+        </p>
+
+        <div class="author-meta">
+          <img src="{{ featured_post.profile.profile_pic_url }}" alt="{{ featured_post.profile.handle }}" class="author-avatar">
+          <div class="author-info">
+            <div class="author-name"><a href="{% url 'profile_detail' featured_post.profile.handle %}">@{{ featured_post.profile.handle }}</a></div>
+            <div class="author-handle">{{ featured_post.views_count }} views &bull; {{ featured_post.published_at|date:"N j, Y" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <!-- Empty State -->
+    <div style="text-align: center; padding: 4rem 1rem; border: 1px dashed var(--border-color); border-radius: 4px; margin-bottom: 3rem;">
+      <h2 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem;">No Video Blog Posts Yet</h2>
+      <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 1.5rem;">
+        Type any Instagram handle into the search bar at the top (e.g. <code>@nature</code>, <code>@fidelis</code>, or <code>@tech</code>) and click <strong>Scan & Generate Blog</strong>.
+      </p>
+    </div>
+  {% endif %}
+
+  <!-- Grid of Articles -->
+  <div class="section-title">
+    <span>Latest Aggregated Video Blog Posts</span>
+  </div>
+
+  <div class="articles-grid">
+    {% for post in grid_posts %}
+      <article class="article-card">
+        <div class="card-media">
+          <video controls poster="{{ post.thumbnail_url }}" preload="metadata" style="width:100%; height:100%; object-fit:cover;">
+            <source src="{{ post.video_url }}" type="video/mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <div class="meta-badge">@{{ post.profile.handle }} &bull; Video Article</div>
+          <h3 class="card-title">
+            <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
+          </h3>
+          <p class="card-caption">
+            {{ post.caption }}
+          </p>
+          <div class="card-footer">
+            <span>{{ post.views_count }} VIEWS</span>
+            <span>{{ post.published_at|date:"M j, Y" }}</span>
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      {% if featured_post %}
+        <!-- Only 1 post exists -->
+      {% endif %}
+    {% endfor %}
+  </div>
+
+</div>
+
+{% endblock %}
