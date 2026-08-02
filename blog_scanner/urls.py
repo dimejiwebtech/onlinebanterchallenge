@@ -8,4 +8,6 @@ urlpatterns = [
     path('profile/<str:handle>/', views.profile_detail_view, name='profile_detail'),
     path('post/<slug:slug>/', views.post_detail_view, name='post_detail'),
     path('dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
+    path('media-proxy/<path:path>', views.media_proxy_view, name='media_proxy'),
 ]
+

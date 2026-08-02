@@ -104,3 +104,42 @@ def admin_dashboard_view(request):
         'logs': logs
     }
     return render(request, 'blog/admin_dashboard.html', context)
+
+
+def media_proxy_view(request, path):
+    """
+    Proxies media requests (videos & thumbnails) from Cloudflare R2 with full CORS & Range header support.
+    Guarantees HTML5 video playback across all browsers without domain or CORS issues.
+    """
+    import requests
+    from django.conf import settings
+    from django.http import HttpResponse, Http404, StreamingHttpResponse
+
+    r2_domain = getattr(settings, 'R2_CUSTOM_DOMAIN', 'pub-58cad644cf9449b7a0ed1133c84b7840.r2.dev')
+    r2_url = f"https://{r2_domain}/{path}"
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    if 'HTTP_RANGE' in request.META:
+        headers['Range'] = request.META['HTTP_RANGE']
+
+    try:
+        resp = requests.get(r2_url, headers=headers, stream=True, timeout=20)
+        if resp.status_code not in (200, 206):
+            raise Http404(f"Media file not found: {path}")
+
+        django_resp = StreamingHttpResponse(
+            resp.iter_content(chunk_size=1024 * 64),
+            content_type=resp.headers.get('Content-Type', 'video/mp4' if path.endswith('.mp4') else 'image/jpeg'),
+            status=resp.status_code
+        )
+        django_resp['Access-Control-Allow-Origin'] = '*'
+        for header in ['Content-Length', 'Content-Range', 'Accept-Ranges']:
+            if header in resp.headers:
+                django_resp[header] = resp.headers[header]
+
+        return django_resp
+    except Exception as e:
+        raise Http404(f"Media proxy error: {e}")
+

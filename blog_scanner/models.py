@@ -46,17 +46,9 @@ class BlogPost(models.Model):
         if not self.video_url:
             return ""
         if 'videos/' in self.video_url:
-            from django.conf import settings
             key_index = self.video_url.find('videos/')
             key = self.video_url[key_index:].split('?')[0]
-            domain = getattr(settings, 'R2_CUSTOM_DOMAIN', 'pub-58cad644cf9449b7a0ed1133c84b7840.r2.dev')
-            if domain:
-                return f"https://{domain}/{key}"
-            from django.core.files.storage import default_storage
-            try:
-                return default_storage.url(key)
-            except Exception:
-                pass
+            return f"/media-proxy/{key}"
         return self.video_url
 
     @property
@@ -64,18 +56,11 @@ class BlogPost(models.Model):
         if not self.thumbnail_url:
             return ""
         if 'thumbnails/' in self.thumbnail_url:
-            from django.conf import settings
             key_index = self.thumbnail_url.find('thumbnails/')
             key = self.thumbnail_url[key_index:].split('?')[0]
-            domain = getattr(settings, 'R2_CUSTOM_DOMAIN', 'pub-58cad644cf9449b7a0ed1133c84b7840.r2.dev')
-            if domain:
-                return f"https://{domain}/{key}"
-            from django.core.files.storage import default_storage
-            try:
-                return default_storage.url(key)
-            except Exception:
-                pass
+            return f"/media-proxy/{key}"
         return self.thumbnail_url
+
 
 
 
