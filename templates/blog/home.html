@@ -24,8 +24,8 @@
     <!-- Featured Hero Section -->
     <div class="hero-editorial">
       <div class="video-container">
-        <video controls poster="{{ featured_post.thumbnail_url }}" class="editorial-video" preload="metadata">
-          <source src="{{ featured_post.video_url }}" type="video/mp4">
+        <video controls poster="{{ featured_post.get_thumbnail_url }}" class="editorial-video" preload="metadata">
+          <source src="{{ featured_post.get_video_url }}" type="video/mp4">
           Your browser does not support the video tag.
         </video>
       </div>
@@ -67,10 +67,11 @@
     {% for post in grid_posts %}
       <article class="article-card">
         <div class="card-media">
-          <video controls poster="{{ post.thumbnail_url }}" preload="metadata" style="width:100%; height:100%; object-fit:cover;">
-            <source src="{{ post.video_url }}" type="video/mp4">
+          <video controls poster="{{ post.get_thumbnail_url }}" preload="metadata" style="width:100%; height:100%; object-fit:cover;">
+            <source src="{{ post.get_video_url }}" type="video/mp4">
           </video>
         </div>
+
         <div class="card-body">
           <div class="meta-badge">@{{ post.profile.handle }} &bull; Video Article</div>
           <h3 class="card-title">
