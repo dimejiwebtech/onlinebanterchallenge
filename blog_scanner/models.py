@@ -6,7 +6,7 @@ class InstagramProfile(models.Model):
     handle = models.CharField(max_length=100, unique=True, help_text="Instagram handle without @ symbol")
     display_name = models.CharField(max_length=150, blank=True)
     bio = models.TextField(blank=True)
-    profile_pic_url = models.URLField(blank=True)
+    profile_pic_url = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     last_scanned_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -25,11 +25,12 @@ class BlogPost(models.Model):
     caption = models.TextField(blank=True)
     article_body = models.TextField(help_text="Generated editorial blog article content")
     ig_post_id = models.CharField(max_length=100, unique=True)
-    ig_url = models.URLField(blank=True)
+    ig_url = models.TextField(blank=True)
     
     # Video & Media
-    video_url = models.URLField(blank=True, max_length=500, help_text="Hosted or source video URL")
-    thumbnail_url = models.URLField(blank=True, max_length=500)
+    video_url = models.TextField(blank=True, help_text="Hosted or source video URL")
+    thumbnail_url = models.TextField(blank=True)
+
     views_count = models.PositiveIntegerField(default=0)
     likes_count = models.PositiveIntegerField(default=0)
     comments_count = models.PositiveIntegerField(default=0)
