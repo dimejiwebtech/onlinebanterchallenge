@@ -115,8 +115,10 @@ def media_proxy_view(request, path):
     from django.conf import settings
     from django.http import HttpResponse, Http404, StreamingHttpResponse
 
-    r2_domain = getattr(settings, 'R2_CUSTOM_DOMAIN', 'pub-58cad644cf9449b7a0ed1133c84b7840.r2.dev')
+    r2_domain = getattr(settings, 'R2_CUSTOM_DOMAIN', 'pub-58cad644cf9449b7a0ed1133c84b7840.r2.dev') or 'pub-58cad644cf9449b7a0ed1133c84b7840.r2.dev'
+    r2_domain = r2_domain.replace('https://', '').replace('http://', '').strip('/')
     r2_url = f"https://{r2_domain}/{path}"
+
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
