@@ -45,31 +45,30 @@ class BlogPost(models.Model):
     def get_video_url(self):
         if not self.video_url:
             return ""
-        if 'r2.cloudflarestorage.com' in self.video_url and 'X-Amz-Signature' not in self.video_url:
+        if 'videos/' in self.video_url and 'X-Amz-Signature' not in self.video_url:
             from django.core.files.storage import default_storage
-            key_index = self.video_url.find('/videos/')
-            if key_index != -1:
-                key = self.video_url[key_index+1:]
-                try:
-                    return default_storage.url(key)
-                except Exception:
-                    pass
+            key_index = self.video_url.find('videos/')
+            key = self.video_url[key_index:].split('?')[0]
+            try:
+                return default_storage.url(key)
+            except Exception:
+                pass
         return self.video_url
 
     @property
     def get_thumbnail_url(self):
         if not self.thumbnail_url:
             return ""
-        if 'r2.cloudflarestorage.com' in self.thumbnail_url and 'X-Amz-Signature' not in self.thumbnail_url:
+        if 'thumbnails/' in self.thumbnail_url and 'X-Amz-Signature' not in self.thumbnail_url:
             from django.core.files.storage import default_storage
-            key_index = self.thumbnail_url.find('/thumbnails/')
-            if key_index != -1:
-                key = self.thumbnail_url[key_index+1:]
-                try:
-                    return default_storage.url(key)
-                except Exception:
-                    pass
+            key_index = self.thumbnail_url.find('thumbnails/')
+            key = self.thumbnail_url[key_index:].split('?')[0]
+            try:
+                return default_storage.url(key)
+            except Exception:
+                pass
         return self.thumbnail_url
+
 
     class Meta:
         ordering = ['-published_at']
